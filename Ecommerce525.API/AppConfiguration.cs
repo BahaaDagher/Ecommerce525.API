@@ -20,6 +20,7 @@ namespace Ecommerce525.API
             services.AddScoped<IProductColorRepository, ProductColorRepository>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IDbInitializer, DbInitializer>();
+            services.AddScoped<IJwtHandler, JwtHandler>();
         }
     }
 }

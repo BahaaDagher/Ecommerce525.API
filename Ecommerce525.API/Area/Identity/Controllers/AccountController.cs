@@ -17,13 +17,15 @@ namespace Ecommerce525.API.Area.Identity.Controllers
         SignInManager<ApplicationUser> _signInManager;
         IEmailSender _emailSender;
         IRepository<ApplicationUserOTP> _applicationUserOTP;
+        IJwtHandler _jwtHandler;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<ApplicationUserOTP> applicationUserOTP)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<ApplicationUserOTP> applicationUserOTP, IJwtHandler jwtHandler)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _applicationUserOTP = applicationUserOTP;
+            _jwtHandler = jwtHandler;
         }
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterRequest registerVM)
@@ -96,11 +98,10 @@ namespace Ecommerce525.API.Area.Identity.Controllers
                     Errors = errors
                 }); 
             }
-            //TempData["Success-Notification"] = "Login Successfully";
-            return Ok(new ApiResponse<object>()
+            var token = await _jwtHandler.GenerateAccessTokenAsync(user); 
+            return Ok(new AuthenticatedResponse()
             {
-                IsSuccess = true  , 
-                Message = "Login Successfully"  , 
+                AccessToken = token 
             });
         }
         [HttpGet("ConfirmEmail")]
